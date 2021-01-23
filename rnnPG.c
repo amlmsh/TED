@@ -16,10 +16,13 @@ static double W;
 static double a_1;
 static double a_2;
 static double a_3;
+static double a_4;
 
 // connectivity values of the recurrent neural network
 static double a;
 static double b;
+
+static double orientation = 0.0; // range +/- 0.05
 
 
 void getCommandLine(int argc, char *argv[]){
@@ -80,6 +83,7 @@ void resetNeuronActivities(){
   a_1 = 0.0002;
   a_2 = 0.003;
   a_3 = 0.001;
+  a_4 = 0.001;  
 }
 
 
@@ -91,9 +95,10 @@ void setConnectivityParameters(){
 
 
 void updateNeuronActivities(){
-  a_1 = a*sigmoide(a_1) + b*sigmoide(a_2) - 0.5*(a+b);
+  a_1 = a*sigmoide(a_1) + b*sigmoide(a_2) - 0.5*(a+b) + orientation;
   a_2 = a*sigmoide(a_2) - b*sigmoide(a_1) + 0.5*(b-a);
-  a_3 = W*sigmoide(a_2) + P;
+  a_3 = W*sigmoide(a_1 - 0.0) + P;
+  a_4 = W*sigmoide(a_2 + 0.0) + P;
 }
 
 int main(int argc, char *argv[]){
@@ -107,8 +112,8 @@ int main(int argc, char *argv[]){
   int i = 0;
   while(i++ < nmbSteps){
     updateNeuronActivities();
-    printf("%d\t%f\t%f\t%f\n",
-	   i,sigmoide(a_1),sigmoide(a_2),sigmoide(a_3));
+    printf("%d\t%f\t%f\t%f\t%f\n",
+	   i,sigmoide(a_1),sigmoide(a_2),sigmoide(a_3),sigmoide(a_4));
   }
   
 
